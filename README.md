@@ -42,7 +42,11 @@ Next.js loads frontend variables from `.env.local`. Set backend variables in you
 
 Alternatively, run `docker compose up --build` from the repository root. SQLite uses the `route53-data` volume. `docker compose down` preserves it; `down -v` deletes it.
 
-The Railway deployment uses separate `/frontend` and `/backend` services. Backend runs one replica with `DATABASE_PATH=/data/route53.db` on a persistent `/data` volume. Frontend builds with `API_URL=http://backend.railway.internal:8000` and exposes port 3000. Both services wait for CI before deploying.
+### Deployment
+
+Hosted on Railway: [Live application](https://edwin-route53-clone.up.railway.app/hosted-zones).
+
+The deployment uses separate `/frontend` and `/backend` services. Backend runs one replica with `DATABASE_PATH=/data/route53.db` on a persistent `/data` volume. Frontend builds with `API_URL=http://backend.railway.internal:8000` and exposes port 3000. Both services wait for CI before deploying.
 
 ### Checks
 
