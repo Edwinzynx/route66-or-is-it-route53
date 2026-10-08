@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_PATH: /data/route53.db
+      COOKIE_SECURE: "false"
+      PORT: "8000"
+    volumes:
+      - route53-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        API_URL: http://backend:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+volumes:
+  route53-data:

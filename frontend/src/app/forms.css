@@ -1,0 +1,281 @@
+label,
+.field-label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 7px;
+}
+input:not([type="radio"]):not([type="checkbox"]),
+select,
+textarea {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #7d8998;
+  border-radius: 5px;
+  padding: 8px 10px;
+  color: var(--text);
+  min-height: 36px;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #687888;
+}
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+input[type="radio"],
+input[type="checkbox"] {
+  accent-color: var(--blue);
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin: 0 8px 0 0;
+}
+input:disabled,
+select:disabled {
+  background: #f2f3f3;
+  color: var(--muted);
+}
+.field {
+  margin-bottom: 23px;
+}
+.field:last-child {
+  margin-bottom: 0;
+}
+.form-body {
+  padding: 24px;
+}
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 0;
+}
+.form-container {
+  max-width: 940px;
+}
+.radio-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.radio-card {
+  border: 1px solid #7d8998;
+  border-radius: 8px;
+  padding: 18px;
+  font-weight: 400;
+  cursor: pointer;
+  margin: 0;
+}
+.radio-card.selected {
+  border: 2px solid var(--blue);
+  padding: 17px;
+  background: #f2f8fd;
+}
+.radio-card strong {
+  font-size: 14px;
+}
+.radio-card small {
+  padding-left: 24px;
+}
+.form-section-title {
+  padding: 20px 24px;
+  background: #fafafa;
+  border-bottom: 1px solid #e9ebed;
+}
+.dialog {
+  border: 1px solid #d5dbdb;
+  border-radius: 12px;
+  box-shadow: 0 16px 48px #0004;
+  padding: 0;
+  width: min(560px, calc(100% - 32px));
+  max-height: 90vh;
+}
+.dialog::backdrop {
+  background: #0f1b2a88;
+}
+.dialog-heading {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #d5dbdb;
+}
+.dialog-heading button {
+  border: 0;
+  background: transparent;
+  font-size: 24px;
+  color: #5f6b7a;
+}
+.dialog-body {
+  padding: 24px;
+}
+.dialog-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #d5dbdb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: #fafafa;
+}
+.dialog p {
+  overflow-wrap: anywhere;
+}
+.danger-copy {
+  color: #a2191f;
+}
+.search-row {
+  display: flex;
+  gap: 12px;
+  padding: 0 24px 18px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.search-box {
+  flex: 1;
+  min-width: 190px;
+  position: relative;
+  max-width: 640px;
+}
+.search-box input {
+  padding-left: 34px !important;
+}
+.search-box:before {
+  content: "⌕";
+  position: absolute;
+  left: 11px;
+  top: 2px;
+  font-size: 24px;
+  color: #5f6b7a;
+}
+.search-row select {
+  width: auto;
+  min-width: 150px;
+}
+.table-wrap {
+  overflow-x: auto;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: left;
+  font-size: 13px;
+}
+th {
+  padding: 13px 18px;
+  color: #414d5c;
+  background: #fafafa;
+  border-top: 1px solid #e9ebed;
+  border-bottom: 1px solid #d5dbdb;
+  white-space: nowrap;
+  font-weight: 700;
+}
+td {
+  padding: 15px 18px;
+  border-bottom: 1px solid #e9ebed;
+  vertical-align: top;
+}
+th:first-child,
+td:first-child {
+  padding-left: 24px;
+}
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+tbody tr:hover {
+  background: #f7fbff;
+}
+tr.selected {
+  background: #f2f8fd;
+}
+th.sortable button {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-weight: 700;
+  color: inherit;
+  width: 100%;
+}
+.table-name {
+  font-weight: 600;
+}
+.table-description {
+  max-width: 270px;
+  overflow-wrap: anywhere;
+}
+.select-cell {
+  width: 38px;
+  padding-right: 0;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-top: 1px solid #e9ebed;
+  font-size: 12px;
+  gap: 12px;
+}
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.pagination select {
+  width: auto;
+  padding: 3px 7px;
+  min-height: 30px;
+}
+.record-values {
+  max-width: 380px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+}
+.name-input {
+  display: flex;
+  align-items: stretch;
+}
+.name-input input {
+  border-radius: 5px 0 0 5px !important;
+  min-width: 100px;
+}
+.name-suffix {
+  padding: 8px 10px;
+  border: 1px solid #7d8998;
+  border-left: 0;
+  background: #f2f3f3;
+  border-radius: 0 5px 5px 0;
+  white-space: nowrap;
+  font-size: 13px;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.radio-inline {
+  display: flex;
+  gap: 24px;
+}
+@media (max-width: 700px) {
+  .radio-cards {
+    grid-template-columns: 1fr;
+  }
+  .search-row {
+    padding: 0 18px 16px;
+  }
+  .pagination {
+    padding: 12px;
+    flex-wrap: wrap;
+  }
+  .form-body {
+    padding: 18px;
+  }
+  td,
+  th {
+    padding: 12px;
+  }
+}
