@@ -175,6 +175,10 @@ Single-key shortcuts can be disabled in the help dialog. They are ignored while 
 
 ## Verification
 
+The console's visual references are AWS's [2025 hosted-zone and quick-create screenshots (figures 16–18)](https://aws.amazon.com/blogs/storage/mastering-cross-account-amazon-efs-seamlessly-mount-amazon-efs-on-amazon-eks-cluster/) and [Route 53 navigation screenshots](https://aws.amazon.com/blogs/aws/unify-dns-management-using-amazon-route-53-profiles-with-multiple-vpcs-and-aws-accounts/). The interface uses the compact console header, collapsible navigation, orange primary actions, table toolbars, and quick-create layout. Global search navigates the pages included in this assignment; the account menu contains sign-out. Unsupported AWS services and settings are not simulated as working controls.
+
+Open Sans weights 400/700 are served locally from `frontend/public/fonts`, with licenses and notices from Cloudscape global-styles 1.0.71. `python frontend/scripts/vendor-fonts.py` reproduces these assets; it is not needed during builds and adds no runtime dependency. Public references vary by console version; this is a close visual reproduction of the assignment screens, not a claim of a pixel-exact match to every AWS account setting.
+
 ```powershell
 cd backend
 python -m pytest -q

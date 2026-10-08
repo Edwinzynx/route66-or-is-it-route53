@@ -1,26 +1,16 @@
 "use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "./auth-provider";
 import { Login } from "./login";
 import { Notifications } from "./notifications";
-import { ThemeToggle } from "./theme-toggle";
-import { KeyboardShortcuts } from "./keyboard-shortcuts";
-
-const sections = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Hosted zones", href: "/hosted-zones" },
-  { label: "Health checks", href: "/health-checks" },
-  { label: "Traffic policies", href: "/traffic-policies" },
-  { label: "Resolver", href: "/resolver" },
-  { label: "Profiles", href: "/profiles" },
-];
+import { ConsoleHeader } from "./console-header";
+import { ConsoleNavigation } from "./console-navigation";
+import { Icon } from "./icon";
 
 export function ConsoleShell({ children }: { children: React.ReactNode }) {
   const { user, loading, error, refresh, logout } = useAuth();
-  const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [logoutError, setLogoutError] = useState("");
   const [signingOut, setSigningOut] = useState(false);
   if (loading)
@@ -57,77 +47,39 @@ export function ConsoleShell({ children }: { children: React.ReactNode }) {
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
-      <header className="console-header">
-        <Link
-          href="/hosted-zones"
-          className="aws-logo"
-          aria-label="AWS console home"
-        >
-          aws<span>⌣</span>
-        </Link>
-        <span className="header-divider" />
-        <span className="services-label">
-          ▦ <span>Services</span>
-        </span>
-        <div className="header-product">Amazon Route 53</div>
-        <div className="header-right">
-          <span className="header-region">Global</span>
-          <ThemeToggle />
-          <KeyboardShortcuts />
-          <span className="header-divider" />
-          <span className="account-name">{user.username}</span>
-          <button onClick={signOut} disabled={signingOut}>
-            {signingOut ? "Signing out…" : "Sign out"}
-          </button>
-        </div>
-      </header>
+      <ConsoleHeader
+        username={user.username}
+        signingOut={signingOut}
+        signOut={signOut}
+      />
       <div className="service-bar">
         <button
           className="nav-toggle"
           aria-label="Toggle navigation"
-          aria-expanded={open}
-          onClick={() => setOpen(!open)}
+          aria-controls="service-navigation"
+          onClick={() => {
+            if (window.matchMedia("(max-width: 760px)").matches)
+              setMobileOpen(!mobileOpen);
+            else setOpen(!open);
+          }}
         >
-          ☰
+          <Icon name="menu" />
         </button>
         <span>Route 53</span>
-        <span className="service-global">Global service</span>
       </div>
-      <aside className={`sidebar ${open ? "is-open" : ""}`}>
-        <Link href="/hosted-zones" className="sidebar-title">
-          Route 53
-        </Link>
-        <nav aria-label="Route 53">
-          {sections.map((section) => (
-            <Link
-              key={section.href}
-              href={section.href}
-              onClick={() => setOpen(false)}
-              className={
-                pathname.startsWith(section.href)
-                  ? "nav-item active"
-                  : "nav-item"
-              }
-              aria-current={
-                pathname.startsWith(section.href) ? "page" : undefined
-              }
-            >
-              {section.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="sidebar-bottom">
-          <a
-            href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Route 53 documentation ↗
-          </a>
-          <p>Assignment environment</p>
-        </div>
-      </aside>
-      <main id="main-content" className="main-content">
+      <ConsoleNavigation
+        open={open}
+        mobileOpen={mobileOpen}
+        onClose={() => {
+          setOpen(false);
+          setMobileOpen(false);
+        }}
+        onNavigate={() => setMobileOpen(false)}
+      />
+      <main
+        id="main-content"
+        className={`main-content ${open ? "" : "nav-closed"}`}
+      >
         {logoutError && (
           <div className="alert error" role="alert">
             {logoutError}
@@ -135,6 +87,16 @@ export function ConsoleShell({ children }: { children: React.ReactNode }) {
         )}
         <Notifications>{children}</Notifications>
       </main>
+      <aside className="tools-rail" aria-label="Help">
+        <a
+          href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Route 53 documentation"
+        >
+          <Icon name="info" />
+        </a>
+      </aside>
       <footer className="console-footer">
         <span>Route 53 Clone</span>
         <span>Local simulation · No live DNS changes</span>

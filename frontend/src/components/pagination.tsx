@@ -1,3 +1,4 @@
+import { Icon } from "./icon";
 export function Pagination({
   page,
   pageSize,
@@ -20,8 +21,12 @@ export function Pagination({
           : "0 results"}
       </span>
       <div className="pagination-controls">
-        <label htmlFor="page-size" className="muted" style={{ margin: 0 }}>
-          Rows per page
+        <label
+          htmlFor="page-size"
+          className="page-size-label muted"
+          style={{ margin: 0 }}
+        >
+          Page size
         </label>
         <select
           id="page-size"
@@ -38,10 +43,13 @@ export function Pagination({
           disabled={page <= 1}
           onClick={() => onPage(page - 1)}
         >
-          ‹
+          <Icon name="left" />
         </button>
-        <span>
-          Page {page} of {pages}
+        <span
+          className="pagination-current"
+          aria-label={`Page ${page} of ${pages}`}
+        >
+          {page}
         </span>
         <button
           className="button icon"
@@ -49,7 +57,7 @@ export function Pagination({
           disabled={page >= pages}
           onClick={() => onPage(page + 1)}
         >
-          ›
+          <Icon name="right" />
         </button>
       </div>
     </div>

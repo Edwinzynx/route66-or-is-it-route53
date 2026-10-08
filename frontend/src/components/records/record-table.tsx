@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { DnsRecord } from "@/lib/types";
+import { SortIndicator } from "../icon";
 
 export function RecordTable({
   records,
@@ -30,7 +31,7 @@ export function RecordTable({
     >
       <button onClick={() => onSort(key)}>
         {label}
-        <span>{sort === key ? (order === "asc" ? "▴" : "▾") : "↕"}</span>
+        <SortIndicator active={sort === key} order={order} />
       </button>
     </th>
   );

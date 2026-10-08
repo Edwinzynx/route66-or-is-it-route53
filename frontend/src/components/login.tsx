@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAuth } from "./auth-provider";
 import { ThemeToggle } from "./theme-toggle";
+import { AwsLogo } from "./icon";
 
 export function Login() {
   const { login } = useAuth();
@@ -24,7 +25,7 @@ export function Login() {
     <div className="login-page">
       <ThemeToggle />
       <div className="login-brand">
-        aws<span>⌣</span>
+        <AwsLogo />
       </div>
       <main className="login-card">
         <div className="eyebrow">AWS MANAGEMENT CONSOLE · LOCAL DEMO</div>

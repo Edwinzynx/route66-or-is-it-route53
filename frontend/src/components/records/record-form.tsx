@@ -9,6 +9,7 @@ import {
   type Zone,
 } from "@/lib/types";
 import { useNotify } from "../notifications";
+import { Icon } from "../icon";
 
 const hints: Record<
   RecordType,
@@ -113,6 +114,12 @@ export function RecordForm({
           <h2>{record ? "Record configuration" : "Quick create record"}</h2>
         </div>
         <div className="form-body">
+          {!record && (
+            <div className="record-number">
+              <Icon name="down" />
+              Record 1
+            </div>
+          )}
           <div className="field-grid">
             <div className="field">
               <label htmlFor="record-name">Record name</label>
@@ -121,7 +128,7 @@ export function RecordForm({
                   id="record-name"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="www"
+                  placeholder="subdomain"
                   maxLength={253}
                   autoFocus
                 />
@@ -160,29 +167,35 @@ export function RecordForm({
           <div className="field-grid">
             <div className="field">
               <label htmlFor="record-ttl">TTL (seconds)</label>
-              <input
-                id="record-ttl"
-                type="number"
-                required
-                min={0}
-                max={2147483647}
-                step={1}
-                value={ttl}
-                onChange={(event) => setTtl(event.target.value)}
-              />
-              <small>How long DNS resolvers should cache this record.</small>
-              <div className="actions" style={{ marginTop: 8 }}>
-                {[60, 300, 3600].map((value) => (
+              <div className="ttl-control">
+                <input
+                  id="record-ttl"
+                  type="number"
+                  required
+                  min={0}
+                  max={2147483647}
+                  step={1}
+                  value={ttl}
+                  onChange={(event) => setTtl(event.target.value)}
+                />
+                {[60, 300, 3600, 86400].map((value) => (
                   <button
                     type="button"
-                    className="button link"
+                    className="button"
                     key={value}
                     onClick={() => setTtl(String(value))}
                   >
-                    {value === 60 ? "1m" : value === 300 ? "5m" : "1h"}
+                    {value === 60
+                      ? "1m"
+                      : value === 300
+                        ? "5m"
+                        : value === 3600
+                          ? "1h"
+                          : "1d"}
                   </button>
                 ))}
               </div>
+              <small>How long DNS resolvers should cache this record.</small>
             </div>
             <div className="field">
               <label htmlFor="routing-policy">Routing policy</label>

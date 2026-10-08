@@ -1,5 +1,6 @@
 "use client";
 import { useSyncExternalStore } from "react";
+import { Icon } from "./icon";
 
 function subscribe(callback: () => void) {
   function sync(event: StorageEvent) {
@@ -39,7 +40,7 @@ export function ThemeToggle() {
       aria-pressed={dark}
       title={dark ? "Switch to light mode" : "Switch to dark mode"}
     >
-      <span aria-hidden="true">{dark ? "☀" : "☾"}</span>
+      <Icon name={dark ? "sun" : "moon"} />
       <span className="theme-label">{dark ? "Light mode" : "Dark mode"}</span>
     </button>
   );

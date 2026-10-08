@@ -7,7 +7,7 @@ import { useResource } from "@/lib/use-resource";
 import { Loading, LoadError } from "../resource-state";
 import { ZoneDialog } from "./zone-dialogs";
 import { RecordList } from "../records/record-list";
-import { RecordTransfer } from "../records/record-transfer";
+import { Icon } from "../icon";
 
 export function ZoneDetail({ zoneId }: { zoneId: string }) {
   const {
@@ -45,10 +45,11 @@ export function ZoneDetail({ zoneId }: { zoneId: string }) {
                 </button>
               </div>
             </div>
-            <section className="panel">
-              <div className="panel-heading">
+            <details className="panel zone-summary" open>
+              <summary className="panel-heading">
+                <Icon name="right" />
                 <h2>Hosted zone details</h2>
-              </div>
+              </summary>
               <dl className="details-grid">
                 <div>
                   <dt>Hosted zone name</dt>
@@ -75,11 +76,10 @@ export function ZoneDetail({ zoneId }: { zoneId: string }) {
                   <dd>{new Date(zone.created_at).toLocaleString()}</dd>
                 </div>
               </dl>
-            </section>
+            </details>
             <div className="tabs">
               <span className="tab">Records ({zone.record_count})</span>
             </div>
-            <RecordTransfer zone={zone} onChange={refresh} />
             <RecordList zone={zone} onChange={refresh} />
             {dialog && (
               <ZoneDialog

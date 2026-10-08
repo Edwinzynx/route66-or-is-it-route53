@@ -5,6 +5,8 @@
   --panel-border: #d5dbdb;
   --separator: #e9ebed;
   --control-border: #7d8998;
+  --disabled-border: #b6bec7;
+  --disabled-text: #8c96a1;
   --text-secondary: #414d5c;
   --selected: #f2f8fd;
   --hover: #f7fbff;
@@ -28,6 +30,8 @@
   --panel-border: #455466;
   --separator: #354456;
   --control-border: #8290a0;
+  --disabled-border: #596675;
+  --disabled-text: #8c96a1;
   --text-secondary: #d1dae5;
   --selected: #203d57;
   --hover: #24364a;

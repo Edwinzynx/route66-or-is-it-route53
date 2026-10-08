@@ -47,9 +47,6 @@ export function RecordEditor({
         {title}
       </div>
       <h1>{title}</h1>
-      <p className="description">
-        Specify how to route traffic for a domain or subdomain.
-      </p>
       {loading ? (
         <Loading label="Loading hosted zone…" />
       ) : error ? (

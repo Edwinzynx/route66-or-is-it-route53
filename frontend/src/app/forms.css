@@ -11,9 +11,9 @@ textarea {
   background: var(--surface);
   border: 1px solid var(--control-border);
   border-radius: 5px;
-  padding: 8px 10px;
+  padding: 5px 10px;
   color: var(--text);
-  min-height: 36px;
+  min-height: 32px;
 }
 input::placeholder,
 textarea::placeholder {
@@ -80,7 +80,7 @@ select:disabled {
 }
 .form-section-title {
   padding: 20px 24px;
-  background: var(--surface-subtle);
+  background: var(--surface);
   border-bottom: 1px solid var(--separator);
 }
 .dialog {
@@ -142,13 +142,14 @@ select:disabled {
 .search-box input {
   padding-left: 34px !important;
 }
-.search-box:before {
-  content: "⌕";
+.search-box > .ui-icon {
   position: absolute;
   left: 11px;
-  top: 2px;
-  font-size: 24px;
+  top: 8px;
   color: var(--muted);
+}
+.search-box input::placeholder {
+  font-style: italic;
 }
 .search-row select {
   width: auto;
@@ -182,27 +183,41 @@ kbd {
 .console-header .shortcut-help {
   border: 1px solid #8290a0;
   border-radius: 50%;
-  width: 27px;
-  height: 27px;
+  width: 19px;
+  height: 19px;
   padding: 0;
+  color: #fff;
+  background: transparent;
+  font-size: 12px;
 }
 table {
   border-collapse: collapse;
   width: 100%;
   text-align: left;
-  font-size: 13px;
+  font-size: 14px;
 }
 th {
-  padding: 13px 18px;
+  padding: 12px 16px;
   color: var(--text-secondary);
-  background: var(--surface-subtle);
-  border-top: 1px solid var(--separator);
+  background: var(--surface);
   border-bottom: 1px solid var(--panel-border);
   white-space: nowrap;
   font-weight: 700;
 }
+th + th {
+  position: relative;
+}
+th + th::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+  width: 1px;
+  background: var(--panel-border);
+}
 td {
-  padding: 15px 18px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--separator);
   vertical-align: top;
 }
@@ -231,7 +246,7 @@ th.sortable button {
   width: 100%;
 }
 .table-name {
-  font-weight: 600;
+  font-weight: 400;
 }
 .table-description {
   max-width: 270px;
@@ -264,32 +279,116 @@ th.sortable button {
   max-width: 380px;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
-  font-family: Consolas, monospace;
-  font-size: 12px;
+  font-size: 14px;
 }
 .name-input {
   display: flex;
   align-items: stretch;
 }
 .name-input input {
-  border-radius: 5px 0 0 5px !important;
+  border-radius: 5px !important;
   min-width: 100px;
+  width: 50% !important;
+  flex: 1;
 }
 .name-suffix {
-  padding: 8px 10px;
-  border: 1px solid var(--control-border);
-  border-left: 0;
-  background: var(--bg);
-  border-radius: 0 5px 5px 0;
-  white-space: nowrap;
+  padding: 5px 12px;
+  flex: 1;
+  white-space: normal;
+  overflow-wrap: anywhere;
   font-size: 13px;
-  max-width: 60%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  max-width: 50%;
 }
 .radio-inline {
   display: flex;
   gap: 24px;
+}
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0 20px 16px;
+  gap: 12px;
+}
+.table-intro {
+  color: var(--muted);
+  padding: 0 24px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+.table-intro .ui-icon {
+  width: 12px;
+}
+.table-toolbar .search-row {
+  flex: 1;
+  padding: 0;
+  min-width: 260px;
+}
+.table-toolbar .pagination {
+  padding: 0;
+  border: 0;
+  margin-left: auto;
+}
+.table-toolbar .pagination > span {
+  display: none;
+}
+.pagination-controls {
+  gap: 8px;
+}
+.pagination-controls .button {
+  border: 0;
+}
+.pagination-current {
+  font-weight: 700;
+  color: var(--text);
+  min-width: 20px;
+  text-align: center;
+}
+.page-size-label {
+  font-size: 12px;
+  font-weight: 400;
+}
+.record-number {
+  font-weight: 700;
+  margin: 0 0 24px;
+}
+.record-number .ui-icon {
+  margin-right: 8px;
+}
+.ttl-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sort-indicator {
+  margin-left: auto;
+  display: inline-flex;
+}
+.sort-indicator .ui-icon {
+  width: 12px;
+  height: 12px;
+}
+.sort-indicator.is-sorted .ui-icon {
+  fill: currentColor;
+}
+.sort-indicator.asc {
+  transform: rotate(180deg);
+}
+.ttl-control input {
+  min-width: 80px;
+  flex: 1;
+}
+.ttl-control .button {
+  padding: 3px 12px;
+  min-width: 44px;
+}
+.form-container:has(#record-name) {
+  max-width: 1200px;
+}
+.dialog-heading,
+.dialog-footer {
+  background: var(--surface);
 }
 @media (max-width: 700px) {
   .radio-cards {

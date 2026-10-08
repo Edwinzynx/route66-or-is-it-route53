@@ -9,6 +9,8 @@ import { Loading, LoadError } from "../resource-state";
 import { RecordBulkDialog } from "./record-bulk-dialog";
 import { RecordTable } from "./record-table";
 import { useSelection } from "@/lib/use-selection";
+import { Icon } from "../icon";
+import { RecordTransfer } from "./record-transfer";
 
 export function RecordList({
   zone,
@@ -57,7 +59,6 @@ export function RecordList({
         <div className="panel-heading">
           <div>
             <h2>Records {data && <span>({data.total})</span>}</h2>
-            <p>Define where traffic is routed for this domain.</p>
           </div>
           <div className="actions">
             <button
@@ -68,7 +69,7 @@ export function RecordList({
               }}
               disabled={loading}
             >
-              ↻
+              <Icon name="refresh" />
             </button>
             <button
               className="button"
@@ -105,33 +106,49 @@ export function RecordList({
             </Link>
           </div>
         </div>
-        <div className="search-row">
-          <div className="search-box">
-            <input
-              aria-label="Search records"
-              data-shortcut-search
-              aria-keyshortcuts="/"
-              placeholder="Find records by name or value"
-              value={search}
+        <div className="record-transfers">
+          <RecordTransfer zone={zone} onChange={onChange} />
+        </div>
+        <div className="table-toolbar">
+          <div className="search-row">
+            <div className="search-box">
+              <Icon name="search" />
+              <input
+                aria-label="Search records"
+                data-shortcut-search
+                aria-keyshortcuts="/"
+                placeholder="Find records by name or value"
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <select
+              aria-label="Filter record type"
+              value={type}
               onChange={(event) => {
-                setSearch(event.target.value);
+                setType(event.target.value);
                 setPage(1);
               }}
-            />
+            >
+              <option value="">All record types</option>
+              {[...recordTypes, "SOA"].map((kind) => (
+                <option key={kind}>{kind}</option>
+              ))}
+            </select>
           </div>
-          <select
-            aria-label="Filter record type"
-            value={type}
-            onChange={(event) => {
-              setType(event.target.value);
+          <Pagination
+            page={page}
+            pageSize={pageSize}
+            total={data?.total ?? 0}
+            onPage={setPage}
+            onPageSize={(size) => {
+              setPageSize(size);
               setPage(1);
             }}
-          >
-            <option value="">All record types</option>
-            {[...recordTypes, "SOA"].map((kind) => (
-              <option key={kind}>{kind}</option>
-            ))}
-          </select>
+          />
         </div>
         <p className="selection-note">
           {selected.length} selected on this page. Default NS and SOA records
@@ -170,16 +187,6 @@ export function RecordList({
                   </button>
                 </div>
               )}
-              <Pagination
-                page={page}
-                pageSize={pageSize}
-                total={data.total}
-                onPage={setPage}
-                onPageSize={(size) => {
-                  setPageSize(size);
-                  setPage(1);
-                }}
-              />
             </>
           )
         )}

@@ -6,8 +6,11 @@ import { useDebounced, useResource } from "@/lib/use-resource";
 import { Pagination } from "../pagination";
 import { Loading, LoadError } from "../resource-state";
 import { ZoneDialog } from "./zone-dialogs";
+import { Icon, SortIndicator } from "../icon";
+import { useRouter } from "next/navigation";
 
 export function ZoneList() {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
   const [page, setPage] = useState(1);
@@ -46,7 +49,7 @@ export function ZoneList() {
     >
       <button onClick={() => changeSort(key)}>
         {title}
-        <span>{sort === key ? (order === "asc" ? "▴" : "▾") : "↕"}</span>
+        <SortIndicator active={sort === key} order={order} />
       </button>
     </th>
   );
@@ -56,16 +59,10 @@ export function ZoneList() {
         <Link href="/hosted-zones">Route 53</Link>
         <span>›</span>Hosted zones
       </div>
-      <h1>Hosted zones</h1>
-      <p className="description">
-        A hosted zone is a container for records that define how you route
-        traffic for a domain and its subdomains.
-      </p>
-      <section className="panel" aria-label="Hosted zones">
+      <section className="panel resource-panel" aria-label="Hosted zones">
         <div className="panel-heading">
           <div>
-            <h2>Hosted zones {data && <span>({data.total})</span>}</h2>
-            <p>Manage DNS records and routing for your domains.</p>
+            <h1>Hosted zones {data && <span>({data.total})</span>}</h1>
           </div>
           <div className="actions">
             <button
@@ -74,7 +71,16 @@ export function ZoneList() {
               onClick={refresh}
               disabled={loading}
             >
-              ↻
+              <Icon name="refresh" />
+            </button>
+            <button
+              className="button"
+              disabled={!selected}
+              onClick={() =>
+                selected && router.push(`/hosted-zones/${selected.id}`)
+              }
+            >
+              View details
             </button>
             <button
               className="button"
@@ -104,32 +110,56 @@ export function ZoneList() {
             </Link>
           </div>
         </div>
-        <div className="search-row">
-          <div className="search-box">
-            <input
-              aria-label="Search hosted zones"
-              data-shortcut-search
-              aria-keyshortcuts="/"
-              placeholder="Find hosted zones by name or description"
-              value={search}
+        <p className="table-intro">
+          A hosted zone contains records that specify how to route traffic for a
+          domain and its subdomains.{" "}
+          <a
+            href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/AboutHZWorkingWith.html"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Learn more <Icon name="external" />
+          </a>
+        </p>
+        <div className="table-toolbar">
+          <div className="search-row">
+            <div className="search-box">
+              <Icon name="search" />
+              <input
+                aria-label="Search hosted zones"
+                data-shortcut-search
+                aria-keyshortcuts="/"
+                placeholder="Filter hosted zones by name or description"
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <select
+              aria-label="Filter zone type"
+              value={type}
               onChange={(event) => {
-                setSearch(event.target.value);
+                setType(event.target.value);
                 setPage(1);
               }}
-            />
+            >
+              <option value="">All zone types</option>
+              <option>Public</option>
+              <option>Private</option>
+            </select>
           </div>
-          <select
-            aria-label="Filter zone type"
-            value={type}
-            onChange={(event) => {
-              setType(event.target.value);
+          <Pagination
+            page={page}
+            pageSize={pageSize}
+            total={data?.total ?? 0}
+            onPage={setPage}
+            onPageSize={(size) => {
+              setPageSize(size);
               setPage(1);
             }}
-          >
-            <option value="">All zone types</option>
-            <option>Public</option>
-            <option>Private</option>
-          </select>
+          />
         </div>
         {loading ? (
           <Loading label="Loading hosted zones…" />
@@ -175,16 +205,12 @@ export function ZoneList() {
                             {zone.name}
                           </Link>
                         </td>
-                        <td>
-                          <span className={`badge ${zone.type.toLowerCase()}`}>
-                            {zone.type}
-                          </span>
-                        </td>
+                        <td>{zone.type}</td>
                         <td>{zone.record_count}</td>
                         <td className="table-description">
                           {zone.description || "—"}
                         </td>
-                        <td className="mono nowrap">{zone.id}</td>
+                        <td className="nowrap">{zone.id}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -224,16 +250,6 @@ export function ZoneList() {
                   )}
                 </div>
               )}
-              <Pagination
-                page={page}
-                pageSize={pageSize}
-                total={data.total}
-                onPage={setPage}
-                onPageSize={(size) => {
-                  setPageSize(size);
-                  setPage(1);
-                }}
-              />
             </>
           )
         )}
