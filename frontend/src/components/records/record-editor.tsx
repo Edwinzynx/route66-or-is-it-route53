@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { useResource } from "@/lib/use-resource";
 import type { DnsRecord, Zone } from "@/lib/types";
 import { RecordForm } from "./record-form";
@@ -37,7 +38,7 @@ export function RecordEditor({
   const title = recordId ? "Edit record" : "Create record";
   return (
     <div className="form-container">
-      <div className="breadcrumbs">
+      <Breadcrumbs>
         <Link href="/hosted-zones">Route 53</Link>
         <span>›</span>
         <Link href="/hosted-zones">Hosted zones</Link>
@@ -45,7 +46,7 @@ export function RecordEditor({
         <Link href={`/hosted-zones/${zoneId}`}>{zone?.name || zoneId}</Link>
         <span>›</span>
         {title}
-      </div>
+      </Breadcrumbs>
       <h1>{title}</h1>
       {loading ? (
         <Loading label="Loading hosted zone…" />

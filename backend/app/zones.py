@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException, Query
 from .auth import User
 from .db import connection
 from .schemas import ZoneCreate, ZoneUpdate
+from .pagination import PageNumber, PageSize
 
 router = APIRouter(prefix="/zones", tags=["Hosted zones"])
 
@@ -29,7 +30,7 @@ def search_pattern(value: str) -> str:
 
 @router.get("")
 def list_zones(user: User, search: str = Query("", max_length=253), type: Literal["Public", "Private"] | None = None,
-               page: int = Query(1, ge=1), page_size: int = Query(10, ge=1, le=100),
+               page: PageNumber = 1, page_size: PageSize = 10,
                sort: Literal["name", "type", "record_count", "created_at"] = "name", order: Literal["asc", "desc"] = "asc"):
     where = "z.owner=? AND (z.name LIKE ? ESCAPE '\\' OR z.description LIKE ? ESCAPE '\\')"
     args = [user, search_pattern(search), search_pattern(search)]

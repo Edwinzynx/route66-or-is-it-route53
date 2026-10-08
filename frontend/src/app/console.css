@@ -176,6 +176,15 @@
 .plain-icon:hover {
   color: var(--blue);
 }
+.nav-toggle {
+  background: var(--blue);
+  border-radius: 50%;
+  color: var(--surface);
+}
+.nav-toggle:hover {
+  color: var(--surface);
+  background: #065ba8;
+}
 .sidebar {
   position: fixed;
   left: 0;
@@ -236,20 +245,31 @@
   margin-left: 240px;
   margin-right: 40px;
   margin-top: var(--console-top-offset);
-  padding: 24px 32px 64px;
+  padding: 20px 24px 64px;
   min-height: calc(100vh - var(--console-top-offset) - 30px);
 }
 .main-content.nav-closed {
   margin-left: 0;
 }
 .breadcrumbs {
+  position: fixed;
+  top: var(--console-header-height);
+  left: 64px;
+  right: 56px;
+  height: var(--service-bar-height);
+  z-index: 31;
   display: flex;
   align-items: center;
   gap: 16px;
   font-size: 14px;
-  margin-bottom: 24px;
   color: var(--text-secondary);
-  flex-wrap: wrap;
+  white-space: nowrap;
+  overflow-x: auto;
+  background: var(--surface);
+  border-bottom: 1px solid var(--panel-border);
+}
+.breadcrumbs > * {
+  flex-shrink: 0;
 }
 .breadcrumbs a {
   text-decoration: underline;
@@ -402,6 +422,8 @@
   .breadcrumbs {
     font-size: 12px;
     gap: 10px;
+    left: 52px;
+    right: 12px;
   }
 }
 @media (max-width: 440px) {

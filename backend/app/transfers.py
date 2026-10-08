@@ -31,7 +31,10 @@ def export_zone(zone_id: str, user: User, format: Literal["json", "bind"] = "jso
         zone = serialize_zone(get_owned_zone(db, zone_id, user))
         records = [serialize_record(row) for row in db.execute(
             "SELECT * FROM records WHERE zone_id=? ORDER BY name,type", (zone_id,))]
-    content = export_json(zone, records) if format == "json" else export_bind(zone["name"], records)
+    try:
+        content = export_json(zone, records) if format == "json" else export_bind(zone["name"], records)
+    except ValueError as error:
+        raise HTTPException(422, str(error)) from None
     suffix = "json" if format == "json" else "zone"
     return Response(content, media_type="application/json" if format == "json" else "text/plain",
                     headers={"Content-Disposition": f'attachment; filename="{zone["name"]}.{suffix}"',

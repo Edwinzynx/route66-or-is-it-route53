@@ -84,6 +84,8 @@ select:disabled {
   border-bottom: 1px solid var(--separator);
 }
 .dialog {
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--text);
   background: var(--surface);
   border: 1px solid var(--panel-border);
@@ -307,13 +309,13 @@ th.sortable button {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  padding: 0 20px 16px;
+  padding: 0 24px 16px;
   gap: 12px;
 }
 .table-intro {
   color: var(--muted);
   padding: 0 24px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   font-size: 13px;
 }
 .table-intro .ui-icon {
@@ -344,9 +346,37 @@ th.sortable button {
   min-width: 20px;
   text-align: center;
 }
-.page-size-label {
-  font-size: 12px;
+.pagination .button.icon.table-preferences-button {
+  border-left: 1px solid var(--panel-border) !important;
+  border-radius: 0;
+  padding-left: 16px !important;
+  margin-left: 8px;
+}
+.page-size-options {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.page-size-options legend {
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.page-size-options label {
   font-weight: 400;
+  margin-bottom: 12px;
+}
+.resource-panel .panel-heading {
+  padding-bottom: 8px;
+}
+.table-toolbar .search-box {
+  max-width: none;
+}
+.button.icon.refresh-button {
+  border: 2px solid var(--blue);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
 }
 .record-number {
   font-weight: 700;
@@ -385,6 +415,49 @@ th.sortable button {
 }
 .form-container:has(#record-name) {
   max-width: 1200px;
+}
+.form-container:has(#record-name) > h1 {
+  font-size: 24px;
+}
+.record-form .panel {
+  margin-top: 16px;
+}
+.record-form .form-section-title {
+  padding: 16px 24px;
+  border-bottom: 0;
+}
+.record-form .form-body {
+  padding-top: 0;
+}
+.record-form .record-number {
+  margin-bottom: 16px;
+}
+.record-form .field {
+  margin-bottom: 16px;
+}
+.record-form .field-grid:last-child .field {
+  margin-bottom: 0;
+}
+.field-label-row {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.field-label-row label {
+  margin-bottom: 0;
+}
+.record-form textarea {
+  min-height: 80px;
+}
+.record-form .form-footer {
+  padding-top: 0;
+}
+.field-help {
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 1px solid var(--panel-border);
+  font-size: 12px;
+  font-weight: 700;
 }
 .dialog-heading,
 .dialog-footer {

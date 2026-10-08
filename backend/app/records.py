@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException, Query
 from .auth import User
 from .db import connection
 from .dns_validation import RecordInput, record_name
+from .pagination import PageNumber, PageSize
 from .zones import get_owned_zone, search_pattern
 
 router = APIRouter(prefix="/zones/{zone_id}/records", tags=["DNS records"])
@@ -42,7 +43,7 @@ def check_record(db, zone, body, exclude_id=""):
 @router.get("")
 def list_records(zone_id: str, user: User, search: str = Query("", max_length=253),
                  type: Literal["A", "AAAA", "CNAME", "TXT", "MX", "NS", "PTR", "SRV", "CAA", "SOA"] | None = None,
-                 page: int = Query(1, ge=1), page_size: int = Query(10, ge=1, le=100),
+                 page: PageNumber = 1, page_size: PageSize = 10,
                  sort: Literal["name", "type", "ttl"] = "name", order: Literal["asc", "desc"] = "asc"):
     where = "zone_id=? AND (name LIKE ? ESCAPE '\\' OR values_json LIKE ? ESCAPE '\\')"
     args = [zone_id, search_pattern(search), search_pattern(search)]

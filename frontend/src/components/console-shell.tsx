@@ -65,7 +65,6 @@ export function ConsoleShell({ children }: { children: React.ReactNode }) {
         >
           <Icon name="menu" />
         </button>
-        <span>Route 53</span>
       </div>
       <ConsoleNavigation
         open={open}

@@ -1,4 +1,5 @@
 import { Icon } from "./icon";
+import { TablePreferences } from "./table-preferences";
 export function Pagination({
   page,
   pageSize,
@@ -21,22 +22,6 @@ export function Pagination({
           : "0 results"}
       </span>
       <div className="pagination-controls">
-        <label
-          htmlFor="page-size"
-          className="page-size-label muted"
-          style={{ margin: 0 }}
-        >
-          Page size
-        </label>
-        <select
-          id="page-size"
-          value={pageSize}
-          onChange={(event) => onPageSize(Number(event.target.value))}
-        >
-          {[10, 25, 50].map((size) => (
-            <option key={size}>{size}</option>
-          ))}
-        </select>
         <button
           className="button icon"
           aria-label="Previous page"
@@ -59,6 +44,7 @@ export function Pagination({
         >
           <Icon name="right" />
         </button>
+        <TablePreferences pageSize={pageSize} onPageSize={onPageSize} />
       </div>
     </div>
   );

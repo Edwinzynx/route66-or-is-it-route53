@@ -2,8 +2,8 @@
 import json
 from typing import get_args
 
+import dns.exception
 import dns.name
-import dns.rdata
 import dns.rdataclass
 import dns.rdatatype
 import dns.tokenizer
@@ -11,6 +11,7 @@ import dns.zone
 import dns.zonefile
 
 from .dns_validation import RecordInput, RecordType, record_name
+from .dns_values import parse_value
 
 MAX_IMPORT_RECORDS = 1000
 
@@ -69,10 +70,13 @@ def export_bind(zone_name: str, records: list[dict]) -> str:
     lines = ["; Route 53 Clone export — simulated DNS; not a live delegation.", f"$ORIGIN {zone_name}.", "$TTL 300"]
     for record in records:
         for value in record["values"]:
-            if record["type"] == "TXT" and not value.startswith('"'):
-                value = '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
-            # Stored target names are fully qualified, even without a final dot.
-            rdata = dns.rdata.from_text("IN", record["type"], value, origin=dns.name.root, relativize=False)
+            try:
+                rdata = parse_value(record["type"], value)
+            except (dns.exception.DNSException, ValueError):
+                raise ValueError(
+                    f'Cannot export {record["name"]} ({record["type"]}) as BIND. '
+                    'Edit this record to correct its value, or use JSON export to inspect it.'
+                ) from None
             lines.append(f'{record["name"]}. {record["ttl"]} IN {record["type"]} {rdata.to_text()}')
     return "\n".join(lines) + "\n"
 

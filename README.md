@@ -6,6 +6,8 @@ A Route 53 console recreation for the Scaler fullstack assignment. Built with **
 
 **Hosted demo:** https://edwin-route53-clone.up.railway.app — sign in with `demo` or your own mock account alias.
 
+**Submission guide:** [Reviewer walkthrough and requirement mapping](docs/REVIEWER_GUIDE.md). [Automated checks](https://github.com/Edwinzynx/route66-or-is-it-route53/actions/workflows/ci.yml) run for every push and pull request.
+
 ## Features
 
 - Mock login/logout with HTTP-only session cookies and a seven-day SQLite-backed session.
@@ -88,6 +90,8 @@ backend/
   app/schemas.py       Hosted-zone request validation
   app/zones.py         Owned hosted-zone CRUD and listing
   app/dns_validation.py Type-specific DNS validation
+  app/dns_values.py     Shared DNS value parsing for validation and BIND export
+  app/pagination.py     Shared bounds for zone and record list queries
   app/records.py       Owned DNS-record CRUD and listing
   app/bulk_records.py  Atomic selected-record deletion and TTL updates
   app/zone_files.py    BIND parsing and export serialization
@@ -126,7 +130,7 @@ All resource endpoints require the `route53_session` cookie. FastAPI serves inte
 | GET | `/api/zones/{zoneId}/export?format=json` | Download full zone metadata and records as JSON; `format=bind` downloads a BIND zone file |
 | POST | `/api/zones/{zoneId}/import` | `{ "content": "BIND text", "preview": true }` validates without saving; `preview: false` commits the whole import |
 
-List endpoints accept `search`, `type`, `page`, `page_size`, `sort`, and `order`. Results have `{ items, total, page, page_size }`. Zone sorting supports `name`, `type`, `record_count`, and `created_at`; record sorting supports `name`, `type`, and `ttl`. Page size is bounded to 1–100. Errors use FastAPI's `detail` response: 401 for session failures, 404 for missing/inaccessible resources, 409 for conflicts, and 422 for invalid input.
+List endpoints accept `search`, `type`, `page`, `page_size`, `sort`, and `order`. Results have `{ items, total, page, page_size }`. Zone sorting supports `name`, `type`, `record_count`, and `created_at`; record sorting supports `name`, `type`, and `ttl`. Page size is bounded to 1–100 and page number to 1–1,000,000; oversized values return 422 before reaching SQLite. Errors use FastAPI's `detail` response: 401 for session failures, 404 for missing/inaccessible resources, 409 for conflicts, and 422 for invalid input.
 
 Example zone body:
 
@@ -160,6 +164,8 @@ The parser supports the nine assignment record types, `$ORIGIN`, `$TTL` (includi
 
 **Export JSON** includes zone metadata and every persisted record. **Export BIND** includes all records with absolute names and targets. A BIND export can be reimported into an empty zone with the same name; its default NS/SOA records are preserved as described above. JSON export is for inspection/backups; JSON import is not part of the assignment bonus.
 
+Record validation and BIND export share a DNS parser. Quoted TXT values use BIND escapes and a 255-byte limit per decoded chunk; unquoted TXT input is treated as literal text. Malformed escapes are rejected on create/update. If a record saved by an older version cannot be exported as BIND, the API returns 422 identifying that record; JSON export remains available so it can be inspected and corrected.
+
 Record checkboxes support selecting individual records or all editable records on the current page. **Edit TTL** updates the entire selection; **Delete selected** opens a confirmation dialog listing every affected record. Default records are excluded. Selection is reset when search, filters, sort, or pagination changes. The API validates ownership and all selected IDs before changing anything (maximum 100 IDs per batch).
 
 Use the theme button in the header or sign-in page to switch light/dark mode. The preference is saved in browser storage and synchronized across tabs. The **?** button opens the keyboard guide:
@@ -175,9 +181,11 @@ Single-key shortcuts can be disabled in the help dialog. They are ignored while 
 
 ## Verification
 
-The console's visual references are AWS's [2025 hosted-zone and quick-create screenshots (figures 16–18)](https://aws.amazon.com/blogs/storage/mastering-cross-account-amazon-efs-seamlessly-mount-amazon-efs-on-amazon-eks-cluster/) and [Route 53 navigation screenshots](https://aws.amazon.com/blogs/aws/unify-dns-management-using-amazon-route-53-profiles-with-multiple-vpcs-and-aws-accounts/). The interface uses the compact console header, collapsible navigation, orange primary actions, table toolbars, and quick-create layout. Global search navigates the pages included in this assignment; the account menu contains sign-out. Unsupported AWS services and settings are not simulated as working controls.
+The console's visual references are AWS's [2025 hosted-zone and quick-create screenshots (figures 16–18)](https://aws.amazon.com/blogs/storage/mastering-cross-account-amazon-efs-seamlessly-mount-amazon-efs-on-amazon-eks-cluster/) and [Route 53 navigation screenshots](https://aws.amazon.com/blogs/aws/unify-dns-management-using-amazon-route-53-profiles-with-multiple-vpcs-and-aws-accounts/). The interface uses service-bar breadcrumbs, collapsible navigation, orange primary actions, table toolbars with circular refresh controls, and a compact quick-create layout with working documentation links. The table preferences button opens page-size settings; Cancel discards changes and Confirm applies them. Global search navigates the pages included in this assignment; the account menu contains sign-out. Unsupported AWS services and settings are not simulated as working controls.
 
 Open Sans weights 400/700 are served locally from `frontend/public/fonts`, with licenses and notices from Cloudscape global-styles 1.0.71. `python frontend/scripts/vendor-fonts.py` reproduces these assets; it is not needed during builds and adds no runtime dependency. Public references vary by console version; this is a close visual reproduction of the assignment screens, not a claim of a pixel-exact match to every AWS account setting.
+
+The favicon in `frontend/src/app/favicon.ico` is the unmodified [AWS website favicon](https://a0.awsstatic.com/libra-css/images/site/fav/favicon.ico) linked by the public [Amazon Route 53 page](https://aws.amazon.com/route53/). The icon and AWS trademarks belong to Amazon Web Services; this assignment is an independent educational clone.
 
 ```powershell
 cd backend
@@ -188,6 +196,10 @@ npm run build
 ```
 
 The API suite covers all nine record types, invalid values, duplicate/CNAME conflicts, ownership isolation, protected defaults, search/filter/pagination, login/logout, and persistence across application restarts. Bonus tests cover BIND parsing/preview/round trips, rejected directives and out-of-zone records, atomic import rollback, downloads, bulk TTL/deletion, and bulk ownership/rollback. GitHub Actions runs the backend suite and frontend TypeScript/lint/build checks on pushes and pull requests.
+
+Regression tests cover malformed TXT escapes on create/update, decoded TXT byte limits, escaped/unquoted/UTF-8 TXT export and reimport, recovery from legacy invalid records, and oversized/boundary pagination on both list endpoints.
+
+The release verification on 9 October 2026 passed **58 backend tests**, TypeScript, ESLint, and the Next.js production build. Desktop/mobile layout, table preferences Cancel/Confirm, TTL presets, light/dark mode, and malformed-TXT error recovery were checked in Chrome. Frontend interaction checks are manual; no automated browser test suite is included.
 
 Manual acceptance flow: sign in, create a zone, create/edit/search/delete a record, refresh the browser, sign out/in, edit the zone description, delete the zone after removing custom records, and confirm empty/loading/error states. Check both desktop and narrow-screen layouts.
 
@@ -207,6 +219,6 @@ Deploy both services from this GitHub repository in one Railway project. Railway
 
 The hosted demo passed HTTPS API checks for all nine record types (create/read/update/delete), zone creation and description updates, record search, invalid-input rejection, deletion guards, and secure HTTP-only session cookies. An existing session, hosted zone, and DNS record survived a confirmed Railway backend restart; record/zone deletion and logout also passed afterward. Both Docker images built successfully on Railway. Hosting currently uses Railway trial credits; continued availability depends on the account's remaining credits and plan.
 
-Configure both services with the On Failure restart policy and three restart attempts. These instructions use Railway's current service settings: new services can no longer opt into the deprecated `railway.toml` Config as Code mechanism. Back up the SQLite file using SQLite's online backup API when needed; copying only the database file while WAL writes are active is not a reliable backup. A redeploy must keep the same backend volume.
+Configure both services with the On Failure restart policy and three restart attempts. This deployment uses Railway service settings rather than a checked-in Railway configuration file. Back up the SQLite file using SQLite's online backup API when needed; copying only the database file while WAL writes are active is not a reliable backup. A redeploy must keep the same backend volume.
 
 Authentication is intentionally mocked for evaluation. Do not store secrets or private production DNS configurations in the hosted demo.

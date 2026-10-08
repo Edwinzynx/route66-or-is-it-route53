@@ -10,6 +10,7 @@ import {
 } from "@/lib/types";
 import { useNotify } from "../notifications";
 import { Icon } from "../icon";
+import { RecordFieldLabel } from "./record-field-label";
 
 const hints: Record<
   RecordType,
@@ -108,7 +109,7 @@ export function RecordForm({
     }
   }
   return (
-    <form onSubmit={submit}>
+    <form className="record-form" onSubmit={submit}>
       <section className="panel">
         <div className="form-section-title">
           <h2>{record ? "Record configuration" : "Quick create record"}</h2>
@@ -122,7 +123,7 @@ export function RecordForm({
           )}
           <div className="field-grid">
             <div className="field">
-              <label htmlFor="record-name">Record name</label>
+              <RecordFieldLabel htmlFor="record-name">Record name</RecordFieldLabel>
               <div className="name-input">
                 <input
                   id="record-name"
@@ -137,7 +138,7 @@ export function RecordForm({
               <small>Leave blank to create a record for {zone.name}.</small>
             </div>
             <div className="field">
-              <label htmlFor="record-type">Record type</label>
+              <RecordFieldLabel htmlFor="record-type">Record type</RecordFieldLabel>
               <select
                 id="record-type"
                 value={type}
@@ -152,11 +153,11 @@ export function RecordForm({
             </div>
           </div>
           <div className="field">
-            <label htmlFor="record-values">Value</label>
+            <RecordFieldLabel htmlFor="record-values">Value</RecordFieldLabel>
             <textarea
               id="record-values"
               className="mono"
-              rows={5}
+              rows={4}
               required
               placeholder={hints[type].example}
               value={values}
@@ -166,7 +167,7 @@ export function RecordForm({
           </div>
           <div className="field-grid">
             <div className="field">
-              <label htmlFor="record-ttl">TTL (seconds)</label>
+              <RecordFieldLabel htmlFor="record-ttl">TTL (seconds)</RecordFieldLabel>
               <div className="ttl-control">
                 <input
                   id="record-ttl"
@@ -198,11 +199,10 @@ export function RecordForm({
               <small>How long DNS resolvers should cache this record.</small>
             </div>
             <div className="field">
-              <label htmlFor="routing-policy">Routing policy</label>
+              <RecordFieldLabel htmlFor="routing-policy">Routing policy</RecordFieldLabel>
               <select id="routing-policy" value="Simple" disabled>
-                <option>Simple</option>
+                <option value="Simple">Simple routing</option>
               </select>
-              <small>Simple routing is supported in this assignment.</small>
             </div>
           </div>
         </div>

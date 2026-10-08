@@ -12,6 +12,7 @@ const paths = {
   sun: "M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.5 1.5M11.5 11.5 13 13M3 13l1.5-1.5M11.5 4.5 13 3M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z",
   grid: "M1 1h3v3H1ZM6.5 1h3v3h-3ZM12 1h3v3h-3ZM1 6.5h3v3H1ZM6.5 6.5h3v3h-3ZM12 6.5h3v3h-3ZM1 12h3v3H1ZM6.5 12h3v3h-3ZM12 12h3v3h-3Z",
   sort: "m3 5 5 6 5-6Z",
+  settings: "M6.5 1h3l.5 2 1 .6 2-.5 1.5 2.6-1.5 1.5v1.6l1.5 1.5-1.5 2.6-2-.5-1 .6-.5 2h-3l-.5-2-1-.6-2 .5L1.5 10.3 3 8.8V7.2L1.5 5.7 3 3.1l2 .5 1-.6ZM10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z",
 } as const;
 
 export function SortIndicator({

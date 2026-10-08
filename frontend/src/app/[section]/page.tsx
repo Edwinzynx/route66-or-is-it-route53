@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 const sections: Record<string, string> = {
   dashboard: "Dashboard",
   "health-checks": "Health checks",
@@ -17,11 +18,11 @@ export default async function PlaceholderPage({
   if (!title) notFound();
   return (
     <>
-      <div className="breadcrumbs">
+      <Breadcrumbs>
         <Link href="/hosted-zones">Route 53</Link>
         <span>›</span>
         {title}
-      </div>
+      </Breadcrumbs>
       <h1>{title}</h1>
       <div className="panel empty-state">
         <div className="empty-icon">◇</div>

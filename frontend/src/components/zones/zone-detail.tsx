@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Zone } from "@/lib/types";
@@ -20,13 +21,13 @@ export function ZoneDetail({ zoneId }: { zoneId: string }) {
   const router = useRouter();
   return (
     <>
-      <div className="breadcrumbs">
+      <Breadcrumbs>
         <Link href="/hosted-zones">Route 53</Link>
         <span>›</span>
         <Link href="/hosted-zones">Hosted zones</Link>
         <span>›</span>
         {zone?.name || zoneId}
-      </div>
+      </Breadcrumbs>
       {loading ? (
         <Loading label="Loading hosted zone…" />
       ) : error ? (

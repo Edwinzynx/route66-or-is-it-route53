@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "@/lib/api";
@@ -32,12 +33,12 @@ export function ZoneCreate() {
   }
   return (
     <div className="form-container">
-      <div className="breadcrumbs">
+      <Breadcrumbs>
         <Link href="/hosted-zones">Route 53</Link>
         <span>›</span>
         <Link href="/hosted-zones">Hosted zones</Link>
         <span>›</span>Create hosted zone
-      </div>
+      </Breadcrumbs>
       <h1>Create hosted zone</h1>
       <p className="description">
         Create a hosted zone to define how to route traffic for your domain.

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { useState } from "react";
 import type { Page, Zone } from "@/lib/types";
 import { useDebounced, useResource } from "@/lib/use-resource";
@@ -55,10 +56,10 @@ export function ZoneList() {
   );
   return (
     <>
-      <div className="breadcrumbs">
+      <Breadcrumbs>
         <Link href="/hosted-zones">Route 53</Link>
         <span>›</span>Hosted zones
-      </div>
+      </Breadcrumbs>
       <section className="panel resource-panel" aria-label="Hosted zones">
         <div className="panel-heading">
           <div>
@@ -66,7 +67,7 @@ export function ZoneList() {
           </div>
           <div className="actions">
             <button
-              className="button icon"
+              className="button icon refresh-button"
               aria-label="Refresh hosted zones"
               onClick={refresh}
               disabled={loading}
@@ -86,19 +87,19 @@ export function ZoneList() {
               className="button"
               disabled={!selected}
               onClick={() =>
-                selected && setDialog({ zone: selected, mode: "delete" })
+                selected && setDialog({ zone: selected, mode: "edit" })
               }
             >
-              Delete
+              Edit
             </button>
             <button
               className="button"
               disabled={!selected}
               onClick={() =>
-                selected && setDialog({ zone: selected, mode: "edit" })
+                selected && setDialog({ zone: selected, mode: "delete" })
               }
             >
-              Edit
+              Delete
             </button>
             <Link
               className="button primary"

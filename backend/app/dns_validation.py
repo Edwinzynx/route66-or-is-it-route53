@@ -3,8 +3,10 @@ import ipaddress
 import re
 from typing import Literal
 
+import dns.exception
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from .dns_values import parse_value
 from .schemas import domain_name
 
 RecordType = Literal["A", "AAAA", "CNAME", "TXT", "MX", "NS", "PTR", "SRV", "CAA"]
@@ -96,10 +98,13 @@ class RecordInput(BaseModel):
                         if value.startswith('"'):
                             chunks = re.findall(r'"((?:[^"\\]|\\.)*)"', value)
                             remainder = re.sub(r'"(?:[^"\\]|\\.)*"', "", value).strip()
-                            if remainder or not chunks or any(len(chunk.encode()) > 255 for chunk in chunks):
+                            if remainder or not chunks:
                                 raise ValueError("Use quoted TXT strings of at most 255 bytes each.")
                         elif '"' in value or len(value.encode()) > 255:
                             raise ValueError("TXT values over 255 bytes must be split into quoted strings.")
-            except ValueError as error:
+                # This validates escapes and the decoded 255-byte TXT chunk limit,
+                # so a saved value cannot fail later solely during BIND parsing.
+                parse_value(self.type, value)
+            except (dns.exception.DNSException, ValueError) as error:
                 raise ValueError(f"Invalid {self.type} value: {error}") from None
         return self

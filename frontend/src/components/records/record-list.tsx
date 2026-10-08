@@ -62,7 +62,7 @@ export function RecordList({
           </div>
           <div className="actions">
             <button
-              className="button icon"
+              className="button icon refresh-button"
               aria-label="Refresh records"
               onClick={() => {
                 refresh();
