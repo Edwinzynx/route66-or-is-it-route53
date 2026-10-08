@@ -4,7 +4,7 @@ A Route 53 console recreation for the Scaler fullstack assignment. Built with **
 
 **Repository:** https://github.com/Edwinzynx/route66-or-is-it-route53
 
-**Hosted demo:** Railway deployment pending. The local app is available at http://localhost:3000 after startup.
+**Hosted demo:** https://frontend-production-0c0fd.up.railway.app — sign in with `demo` or your own mock account alias.
 
 ## Features
 
@@ -164,13 +164,16 @@ Known tooling limitation: the installed Next.js ESLint configuration currently p
 
 Deploy both services from this GitHub repository in one Railway project. Railway's monorepo guide: https://docs.railway.com/deployments/monorepo. Persistent volume guide: https://docs.railway.com/volumes/reference.
 
-1. Create a service named **backend**, with root directory `/backend` and config file `/backend/railway.toml`. Its Dockerfile installs and runs FastAPI.
+1. Create an **empty service** named **backend**, configure root directory `/backend`, then connect this repository. Review all settings before deploying to avoid an automatic build at the repository root. Railway detects the Dockerfile, which installs and runs FastAPI. Set the health-check path to `/api/health` in service Settings.
 2. Attach a persistent volume at **`/data`** to backend. Set `DATABASE_PATH=/data/route53.db`, `COOKIE_SECURE=true`, and `PORT=8000`. Keep a single backend replica for this local SQLite deployment.
-3. Create a service named **frontend**, with root directory `/frontend` and config file `/frontend/railway.toml`.
+3. Create another **empty service** named **frontend**, configure root directory `/frontend`, then connect this repository. Set its health-check path to `/hosted-zones` in service Settings.
 4. Set frontend `API_URL=http://backend.railway.internal:8000` **before building**, and `PORT=3000`. The Dockerfile accepts `API_URL` as a build argument because Next.js serializes rewrites at build time. If Railway assigns a different private domain, use that domain and rebuild.
 5. Generate an HTTPS public domain for frontend targeting port 3000. Backend can remain private; browsers reach it through the frontend's `/api` proxy.
-6. Verify login, zone/record CRUD, and persistence after restarting the backend. Add the verified frontend URL to the hosted-demo line above.
+6. Enable **Wait for CI** on both services and set watch paths to `/backend/**` and `/frontend/**` respectively. Run local checks and wait for GitHub Actions to pass before deploying source changes. Inspect failure logs before retrying a deployment.
+7. Verify login, zone/record CRUD, and persistence after restarting the backend.
 
-Both services have health checks configured. Back up the SQLite file using SQLite's online backup API when needed; copying only the database file while WAL writes are active is not a reliable backup. A redeploy must keep the same backend volume.
+The hosted demo passed HTTPS API checks for all nine record types (create/read/update/delete), zone creation and description updates, record search, invalid-input rejection, deletion guards, and secure HTTP-only session cookies. An existing session, hosted zone, and DNS record survived a confirmed Railway backend restart; record/zone deletion and logout also passed afterward. Both Docker images built successfully on Railway. Hosting currently uses Railway trial credits; continued availability depends on the account's remaining credits and plan.
+
+Configure both services with the On Failure restart policy and three restart attempts. These instructions use Railway's current service settings: new services can no longer opt into the deprecated `railway.toml` Config as Code mechanism. Back up the SQLite file using SQLite's online backup API when needed; copying only the database file while WAL writes are active is not a reliable backup. A redeploy must keep the same backend volume.
 
 Authentication is intentionally mocked for evaluation. Do not store secrets or private production DNS configurations in the hosted demo.
