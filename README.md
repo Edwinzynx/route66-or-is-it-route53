@@ -4,7 +4,7 @@ A Route 53 console recreation for the Scaler fullstack assignment. Built with **
 
 **Repository:** https://github.com/Edwinzynx/route66-or-is-it-route53
 
-**Hosted demo:** https://frontend-production-0c0fd.up.railway.app — sign in with `demo` or your own mock account alias.
+**Hosted demo:** https://edwin-route53-clone.up.railway.app — sign in with `demo` or your own mock account alias.
 
 ## Features
 

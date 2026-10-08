@@ -1,3 +1,8 @@
+:root {
+  --console-header-height: 48px;
+  --service-bar-height: 40px;
+  --console-top-offset: calc(var(--console-header-height) + var(--service-bar-height));
+}
 .ui-icon {
   width: 16px;
   height: 16px;
@@ -5,7 +10,7 @@
   vertical-align: -3px;
 }
 .console-header {
-  height: 40px;
+  height: var(--console-header-height);
   position: fixed;
   inset: 0 0 auto;
   z-index: 40;
@@ -15,7 +20,8 @@
   align-items: center;
   padding: 0 18px;
   gap: 18px;
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 20px;
 }
 .aws-logo {
   color: #fff;
@@ -49,6 +55,7 @@
   gap: 8px;
   cursor: pointer;
   white-space: nowrap;
+  min-height: 32px;
 }
 .header-menu summary::-webkit-details-marker {
   display: none;
@@ -116,8 +123,8 @@
   background: #161d26 !important;
   color: #fff !important;
   border: 1px solid #8d99a8 !important;
-  min-height: 30px !important;
-  height: 30px;
+  min-height: 32px !important;
+  height: 32px;
   border-radius: 4px !important;
   padding: 3px 12px 3px 36px !important;
 }
@@ -126,7 +133,7 @@
 }
 .search-results {
   width: 100%;
-  top: 35px;
+  top: calc(100% + 8px);
 }
 .search-results small {
   margin: 0 8px 6px;
@@ -142,8 +149,8 @@
 }
 .service-bar {
   position: fixed;
-  inset: 40px 0 auto;
-  height: 36px;
+  inset: var(--console-header-height) 0 auto;
+  height: var(--service-bar-height);
   background: var(--surface);
   border-bottom: 1px solid var(--panel-border);
   z-index: 30;
@@ -151,7 +158,7 @@
   align-items: center;
   padding: 0 18px;
   gap: 16px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .nav-toggle,
 .plain-icon {
@@ -172,7 +179,7 @@
 .sidebar {
   position: fixed;
   left: 0;
-  top: 76px;
+  top: var(--console-top-offset);
   bottom: 30px;
   width: 240px;
   background: var(--surface);
@@ -228,9 +235,9 @@
 .main-content {
   margin-left: 240px;
   margin-right: 40px;
-  margin-top: 76px;
+  margin-top: var(--console-top-offset);
   padding: 24px 32px 64px;
-  min-height: calc(100vh - 106px);
+  min-height: calc(100vh - var(--console-top-offset) - 30px);
 }
 .main-content.nav-closed {
   margin-left: 0;
@@ -255,7 +262,7 @@
 }
 .tools-rail {
   position: fixed;
-  top: 76px;
+  top: var(--console-top-offset);
   right: 0;
   bottom: 30px;
   width: 40px;
