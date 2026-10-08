@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useAuth } from "./auth-provider";
 import { Login } from "./login";
 import { Notifications } from "./notifications";
+import { ThemeToggle } from "./theme-toggle";
+import { KeyboardShortcuts } from "./keyboard-shortcuts";
 
 const sections = [
   { label: "Dashboard", href: "/dashboard" },
@@ -69,7 +71,9 @@ export function ConsoleShell({ children }: { children: React.ReactNode }) {
         </span>
         <div className="header-product">Amazon Route 53</div>
         <div className="header-right">
-          <span>Global</span>
+          <span className="header-region">Global</span>
+          <ThemeToggle />
+          <KeyboardShortcuts />
           <span className="header-divider" />
           <span className="account-name">{user.username}</span>
           <button onClick={signOut} disabled={signingOut}>

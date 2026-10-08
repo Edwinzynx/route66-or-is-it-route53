@@ -73,8 +73,8 @@
   position: fixed;
   inset: 54px 0 auto;
   height: 41px;
-  background: #fff;
-  border-bottom: 1px solid #d5dbdb;
+  background: var(--surface);
+  border-bottom: 1px solid var(--panel-border);
   z-index: 20;
   display: flex;
   align-items: center;
@@ -92,6 +92,7 @@
 .nav-toggle {
   display: none;
   background: none;
+  color: var(--text);
   border: 0;
   font-size: 20px;
 }
@@ -101,8 +102,8 @@
   top: 95px;
   bottom: 34px;
   width: 232px;
-  background: #fff;
-  border-right: 1px solid #d5dbdb;
+  background: var(--surface);
+  border-right: 1px solid var(--panel-border);
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -122,17 +123,17 @@
 }
 .nav-item {
   padding: 9px 28px;
-  color: #414d5c;
+  color: var(--text-secondary);
   border-left: 3px solid transparent;
 }
 .nav-item:hover {
-  background: #f7f8f8;
+  background: var(--surface-subtle);
   text-decoration: none;
 }
 .nav-item.active {
   color: var(--blue);
   font-weight: 700;
-  background: #f2f8fd;
+  background: var(--selected);
   border-left-color: var(--blue);
 }
 .sidebar-bottom {
@@ -157,11 +158,11 @@
   gap: 14px;
   font-size: 13px;
   margin-bottom: 24px;
-  color: #414d5c;
+  color: var(--text-secondary);
   flex-wrap: wrap;
 }
 .breadcrumbs span {
-  color: #7d8998;
+  color: var(--control-border);
 }
 .console-footer {
   position: fixed;
@@ -172,16 +173,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
-  border-top: 1px solid #d5dbdb;
+  background: var(--surface);
+  border-top: 1px solid var(--panel-border);
   padding: 0 22px;
   font-size: 11px;
-  color: #5f6b7a;
+  color: var(--muted);
   z-index: 25;
 }
 .login-page {
   min-height: 100vh;
-  background: #f2f3f3;
+  background: var(--bg);
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -190,7 +191,7 @@
 .login-brand {
   font-size: 48px;
   position: relative;
-  color: #232f3e;
+  color: var(--text);
   font-weight: 700;
   line-height: 1;
   margin-bottom: 45px;
@@ -207,8 +208,8 @@
   width: 100%;
   max-width: 470px;
   padding: 36px;
-  background: #fff;
-  border: 1px solid #d5dbdb;
+  background: var(--surface);
+  border: 1px solid var(--panel-border);
   border-radius: 12px;
   box-shadow: 0 3px 12px #00000008;
 }
@@ -228,7 +229,7 @@
 .login-note {
   font-size: 12px;
   color: var(--muted);
-  border-top: 1px solid #e9ebed;
+  border-top: 1px solid var(--separator);
   padding-top: 20px;
 }
 .login-footer {

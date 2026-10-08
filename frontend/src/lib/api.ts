@@ -7,10 +7,10 @@ export class ApiError extends Error {
   }
 }
 
-export async function api<T>(
+export async function apiResponse(
   path: string,
   options: RequestInit = {},
-): Promise<T> {
+): Promise<Response> {
   let response: Response;
   try {
     response = await fetch(`/api${path}`, {
@@ -42,5 +42,13 @@ export async function api<T>(
       window.dispatchEvent(new Event("session-expired"));
     throw new ApiError(message, response.status);
   }
+  return response;
+}
+
+export async function api<T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> {
+  const response = await apiResponse(path, options);
   return response.status === 204 ? (undefined as T) : response.json();
 }

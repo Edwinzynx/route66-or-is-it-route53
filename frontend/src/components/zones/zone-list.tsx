@@ -94,7 +94,12 @@ export function ZoneList() {
             >
               Edit
             </button>
-            <Link className="button primary" href="/hosted-zones/create">
+            <Link
+              className="button primary"
+              href="/hosted-zones/create"
+              data-shortcut-create
+              aria-keyshortcuts="N"
+            >
               Create hosted zone
             </Link>
           </div>
@@ -103,6 +108,8 @@ export function ZoneList() {
           <div className="search-box">
             <input
               aria-label="Search hosted zones"
+              data-shortcut-search
+              aria-keyshortcuts="/"
               placeholder="Find hosted zones by name or description"
               value={search}
               onChange={(event) => {

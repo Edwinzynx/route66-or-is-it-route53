@@ -1,5 +1,6 @@
 @import "./console.css";
 @import "./forms.css";
+@import "./theme.css";
 .sr-only {
   position: absolute;
   width: 1px;
@@ -113,16 +114,16 @@ small {
   gap: 7px;
   min-height: 34px;
   padding: 5px 19px;
-  border: 1px solid #7d8998;
+  border: 1px solid var(--control-border);
   border-radius: 20px;
-  background: #fff;
-  color: #414d5c;
+  background: var(--surface);
+  color: var(--text-secondary);
   font-weight: 700;
   white-space: nowrap;
   text-decoration: none;
 }
 .button:hover:not(:disabled) {
-  background: #f2f8fd;
+  background: var(--selected);
   border-color: var(--blue);
   color: var(--blue);
   text-decoration: none;
@@ -130,7 +131,7 @@ small {
 .button.primary {
   background: var(--blue);
   border-color: var(--blue);
-  color: #fff;
+  color: var(--primary-text);
 }
 .button.primary:hover:not(:disabled) {
   background: #033160;
@@ -162,8 +163,8 @@ small {
   flex-wrap: wrap;
 }
 .panel {
-  background: #fff;
-  border: 1px solid #d5dbdb;
+  background: var(--surface);
+  border: 1px solid var(--panel-border);
   border-radius: 12px;
   box-shadow: 0 1px 2px #0000000d;
   margin: 20px 0;
@@ -209,18 +210,18 @@ small {
 }
 .alert.error {
   border-color: #d91515;
-  background: #fff5f5;
-  color: #851717;
+  background: var(--error-bg);
+  color: var(--error-text);
 }
 .alert.success {
   border-color: #037f0c;
-  background: #f2fcf3;
-  color: #14551d;
+  background: var(--success-bg);
+  color: var(--success-text);
 }
 .alert.info {
   border-color: #0972d3;
-  background: #f2f8fd;
-  color: #234566;
+  background: var(--selected);
+  color: var(--info-text);
 }
 .alert button {
   margin-left: auto;
@@ -241,7 +242,7 @@ small {
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #d5dbdb;
+  border: 3px solid var(--panel-border);
   border-top-color: var(--blue);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -263,7 +264,7 @@ small {
   top: -60px;
   left: 20px;
   z-index: 100;
-  background: #fff;
+  background: var(--surface);
   padding: 10px;
 }
 .skip-link:focus {
@@ -280,10 +281,10 @@ small {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  border: 1px solid #d5dbdb;
+  border: 1px solid var(--panel-border);
   border-radius: 4px;
   padding: 1px 7px;
-  background: #f7f8f8;
+  background: var(--surface-subtle);
 }
 .badge.public:before {
   content: "";

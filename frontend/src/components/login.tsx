@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAuth } from "./auth-provider";
+import { ThemeToggle } from "./theme-toggle";
 
 export function Login() {
   const { login } = useAuth();
@@ -21,6 +22,7 @@ export function Login() {
   }
   return (
     <div className="login-page">
+      <ThemeToggle />
       <div className="login-brand">
         aws<span>⌣</span>
       </div>

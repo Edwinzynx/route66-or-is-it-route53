@@ -15,6 +15,9 @@ A Route 53 console recreation for the Scaler fullstack assignment. Built with **
 - Server-side pagination, validation, actionable errors, loading states, empty states, confirmation dialogs, and success notifications.
 - AWS-style console navigation, forms, tables, zone details, and responsive sidebar.
 - Coming Soon pages for Dashboard, Traffic Policies, Health Checks, Resolver, and Profiles.
+- BIND zone-file import with a validated preview and atomic persistence; JSON and BIND exports.
+- Select multiple records for atomic bulk deletion or TTL updates.
+- Persistent light/dark mode and keyboard shortcuts with a help dialog and opt-out.
 
 ## Run locally
 
@@ -86,6 +89,9 @@ backend/
   app/zones.py         Owned hosted-zone CRUD and listing
   app/dns_validation.py Type-specific DNS validation
   app/records.py       Owned DNS-record CRUD and listing
+  app/bulk_records.py  Atomic selected-record deletion and TTL updates
+  app/zone_files.py    BIND parsing and export serialization
+  app/transfers.py     Owned import preview/commit and file downloads
   app/main.py          Application startup and health endpoint
   tests/               API, persistence, ownership, and validation tests
 ```
@@ -116,6 +122,9 @@ All resource endpoints require the `route53_session` cookie. FastAPI serves inte
 | GET / PATCH / DELETE | `/api/zones/{zoneId}` | Read / edit description / delete zone |
 | GET / POST | `/api/zones/{zoneId}/records` | List / create record sets |
 | GET / PUT / DELETE | `/api/zones/{zoneId}/records/{recordId}` | Read / replace / delete a record set |
+| POST | `/api/zones/{zoneId}/records/bulk` | Atomic `{ "operation": "delete" or "ttl", "ids": [...], "ttl": 300 }`; omit TTL for deletion |
+| GET | `/api/zones/{zoneId}/export?format=json` | Download full zone metadata and records as JSON; `format=bind` downloads a BIND zone file |
+| POST | `/api/zones/{zoneId}/import` | `{ "content": "BIND text", "preview": true }` validates without saving; `preview: false` commits the whole import |
 
 List endpoints accept `search`, `type`, `page`, `page_size`, `sort`, and `order`. Results have `{ items, total, page, page_size }`. Zone sorting supports `name`, `type`, `record_count`, and `created_at`; record sorting supports `name`, `type`, and `ttl`. Page size is bounded to 1–100. Errors use FastAPI's `detail` response: 401 for session failures, 404 for missing/inaccessible resources, 409 for conflicts, and 422 for invalid input.
 
@@ -142,7 +151,27 @@ Record names may be relative (`www`), apex (`@` or empty), or fully qualified wi
 - A zone with custom records cannot be deleted until those records are removed.
 - Simple routing is implemented. AWS resource aliases, advanced routing, actual DNS propagation, IAM, and billing are not implemented.
 - Names support ASCII/punycode DNS labels. Records also support underscores and a leading wildcard where appropriate.
-- Optional import/export, dark mode, keyboard shortcuts, and bulk operations are deferred.
+
+## Optional bonuses
+
+Open a hosted zone and choose **Import records** to upload a UTF-8 BIND zone file or paste its contents. Preview the resolved names, values, and TTLs, then confirm the import. Existing record sets are never overwritten; any conflict or invalid record rejects the entire import. Preview is revalidated when saving. Apex NS/SOA entries are explicitly reported as skipped so the destination keeps its default simulated delegation.
+
+The parser supports the nine assignment record types, `$ORIGIN`, `$TTL` (including time units), comments, inherited names, relative targets, quoted text, and multiline records. Files are limited to 1 MB, 1,000 imported record sets, and 10,000 input record values; the existing 100-values-per-set limit still applies. External `$INCLUDE` files and `$GENERATE` are rejected. Unsupported types and out-of-zone owners are rejected rather than silently discarded. `dnspython` is the only added runtime dependency and performs parsing without network or file access. BIND TTLs within a record set are normalized to their minimum by the parser.
+
+**Export JSON** includes zone metadata and every persisted record. **Export BIND** includes all records with absolute names and targets. A BIND export can be reimported into an empty zone with the same name; its default NS/SOA records are preserved as described above. JSON export is for inspection/backups; JSON import is not part of the assignment bonus.
+
+Record checkboxes support selecting individual records or all editable records on the current page. **Edit TTL** updates the entire selection; **Delete selected** opens a confirmation dialog listing every affected record. Default records are excluded. Selection is reset when search, filters, sort, or pagination changes. The API validates ownership and all selected IDs before changing anything (maximum 100 IDs per batch).
+
+Use the theme button in the header or sign-in page to switch light/dark mode. The preference is saved in browser storage and synchronized across tabs. The **?** button opens the keyboard guide:
+
+| Shortcut | Action |
+| --- | --- |
+| `/` | Focus the zone or record search |
+| `N` | Create a zone from the zone list, or a record from zone details |
+| `?` | Open shortcut help |
+| `Esc` | Dismiss a dialog when no save is in progress |
+
+Single-key shortcuts can be disabled in the help dialog. They are ignored while typing, during IME composition, with Ctrl/Alt/Meta modifiers, and inside dialogs. Creation shortcuts do not navigate away from open forms. No shortcut performs deletion or submits data.
 
 ## Verification
 
@@ -154,7 +183,7 @@ npm run check
 npm run build
 ```
 
-The API suite covers all nine record types, invalid values, duplicate/CNAME conflicts, ownership isolation, protected defaults, search/filter/pagination, login/logout, and persistence across application restarts. GitHub Actions runs the backend suite and frontend TypeScript/lint/build checks on pushes and pull requests.
+The API suite covers all nine record types, invalid values, duplicate/CNAME conflicts, ownership isolation, protected defaults, search/filter/pagination, login/logout, and persistence across application restarts. Bonus tests cover BIND parsing/preview/round trips, rejected directives and out-of-zone records, atomic import rollback, downloads, bulk TTL/deletion, and bulk ownership/rollback. GitHub Actions runs the backend suite and frontend TypeScript/lint/build checks on pushes and pull requests.
 
 Manual acceptance flow: sign in, create a zone, create/edit/search/delete a record, refresh the browser, sign out/in, edit the zone description, delete the zone after removing custom records, and confirm empty/loading/error states. Check both desktop and narrow-screen layouts.
 

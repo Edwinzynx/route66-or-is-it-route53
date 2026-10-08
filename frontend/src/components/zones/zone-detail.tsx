@@ -7,6 +7,7 @@ import { useResource } from "@/lib/use-resource";
 import { Loading, LoadError } from "../resource-state";
 import { ZoneDialog } from "./zone-dialogs";
 import { RecordList } from "../records/record-list";
+import { RecordTransfer } from "../records/record-transfer";
 
 export function ZoneDetail({ zoneId }: { zoneId: string }) {
   const {
@@ -78,6 +79,7 @@ export function ZoneDetail({ zoneId }: { zoneId: string }) {
             <div className="tabs">
               <span className="tab">Records ({zone.record_count})</span>
             </div>
+            <RecordTransfer zone={zone} onChange={refresh} />
             <RecordList zone={zone} onChange={refresh} />
             {dialog && (
               <ZoneDialog

@@ -6,7 +6,9 @@ import { recordTypes, type DnsRecord, type Page, type Zone } from "@/lib/types";
 import { useDebounced, useResource } from "@/lib/use-resource";
 import { Pagination } from "../pagination";
 import { Loading, LoadError } from "../resource-state";
-import { RecordDelete } from "./record-delete";
+import { RecordBulkDialog } from "./record-bulk-dialog";
+import { RecordTable } from "./record-table";
+import { useSelection } from "@/lib/use-selection";
 
 export function RecordList({
   zone,
@@ -22,8 +24,10 @@ export function RecordList({
   const [pageSize, setPageSize] = useState(10);
   const [sort, setSort] = useState("name");
   const [order, setOrder] = useState("asc");
-  const [selection, setSelection] = useState("");
-  const [deleting, setDeleting] = useState<DnsRecord>();
+  const [action, setAction] = useState<{
+    operation: "delete" | "ttl";
+    records: DnsRecord[];
+  }>();
   const debounced = useDebounced(search);
   const params = new URLSearchParams({
     search: debounced,
@@ -36,27 +40,17 @@ export function RecordList({
   const { data, error, loading, refresh } = useResource<Page<DnsRecord>>(
     `/zones/${zone.id}/records?${params}`,
   );
-  const selected = data?.items.find((record) => record.id === selection);
-  const editable = selected && !selected.system;
+  const selection = useSelection(
+    data?.items.filter((record) => !record.system) ?? [],
+    `${zone.id}:${search}:${params}`,
+  );
+  const selected = selection.selected;
   const base = `/hosted-zones/${zone.id}/records`;
   function changeSort(key: string) {
     setSort(key);
     setOrder(sort === key && order === "asc" ? "desc" : "asc");
     setPage(1);
   }
-  const heading = (key: string, label: string) => (
-    <th
-      className="sortable"
-      aria-sort={
-        sort === key ? (order === "asc" ? "ascending" : "descending") : "none"
-      }
-    >
-      <button onClick={() => changeSort(key)}>
-        {label}
-        <span>{sort === key ? (order === "asc" ? "▴" : "▾") : "↕"}</span>
-      </button>
-    </th>
-  );
   return (
     <>
       <section className="panel" aria-label="DNS records">
@@ -78,21 +72,35 @@ export function RecordList({
             </button>
             <button
               className="button"
-              disabled={!editable}
-              onClick={() => selected && setDeleting(selected)}
+              disabled={!selected.length}
+              onClick={() =>
+                setAction({ operation: "delete", records: selected })
+              }
             >
-              Delete record
+              Delete selected
             </button>
             <button
               className="button"
-              disabled={!editable}
+              disabled={selected.length !== 1}
               onClick={() =>
-                selected && router.push(`${base}/${selected.id}/edit`)
+                selected[0] && router.push(`${base}/${selected[0].id}/edit`)
               }
             >
               Edit record
             </button>
-            <Link className="button primary" href={`${base}/create`}>
+            <button
+              className="button"
+              disabled={!selected.length}
+              onClick={() => setAction({ operation: "ttl", records: selected })}
+            >
+              Edit TTL
+            </button>
+            <Link
+              className="button primary"
+              href={`${base}/create`}
+              data-shortcut-create
+              aria-keyshortcuts="N"
+            >
               Create record
             </Link>
           </div>
@@ -101,6 +109,8 @@ export function RecordList({
           <div className="search-box">
             <input
               aria-label="Search records"
+              data-shortcut-search
+              aria-keyshortcuts="/"
               placeholder="Find records by name or value"
               value={search}
               onChange={(event) => {
@@ -123,12 +133,10 @@ export function RecordList({
             ))}
           </select>
         </div>
-        {selected?.system && (
-          <div className="alert info" style={{ margin: "0 24px 18px" }}>
-            Default NS and SOA records are read-only in this clone. Nameservers
-            are simulated.
-          </div>
-        )}
+        <p className="selection-note">
+          {selected.length} selected on this page. Default NS and SOA records
+          are read-only.
+        </p>
         {loading ? (
           <Loading label="Loading records…" />
         ) : error ? (
@@ -136,56 +144,16 @@ export function RecordList({
         ) : (
           data && (
             <>
-              <div className="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th className="select-cell">
-                        <span className="sr-only">Select</span>
-                      </th>
-                      {heading("name", "Record name")}
-                      {heading("type", "Type")}
-                      <th>Routing policy</th>
-                      <th>Value / Route traffic to</th>
-                      {heading("ttl", "TTL (seconds)")}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.items.map((record) => (
-                      <tr
-                        key={record.id}
-                        className={selection === record.id ? "selected" : ""}
-                      >
-                        <td className="select-cell">
-                          <input
-                            type="radio"
-                            name="record-selection"
-                            aria-label={`Select ${record.name} ${record.type}`}
-                            checked={selection === record.id}
-                            onChange={() => setSelection(record.id)}
-                          />
-                        </td>
-                        <td className="table-name">
-                          {record.system ? (
-                            record.name
-                          ) : (
-                            <Link href={`${base}/${record.id}/edit`}>
-                              {record.name}
-                            </Link>
-                          )}
-                          {record.system && <small>Default record</small>}
-                        </td>
-                        <td>{record.type}</td>
-                        <td>Simple</td>
-                        <td className="record-values">
-                          {record.values.join("\n")}
-                        </td>
-                        <td>{record.ttl}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <RecordTable
+                records={data.items}
+                selectedIds={selection.ids}
+                toggle={selection.toggle}
+                selectAll={selection.selectAll}
+                sort={sort}
+                order={order}
+                onSort={changeSort}
+                base={base}
+              />
               {!data.items.length && (
                 <div className="empty-state">
                   <h2>No matching records</h2>
@@ -216,13 +184,13 @@ export function RecordList({
           )
         )}
       </section>
-      {deleting && (
-        <RecordDelete
-          record={deleting}
-          onClose={() => setDeleting(undefined)}
+      {action && (
+        <RecordBulkDialog
+          {...action}
+          onClose={() => setAction(undefined)}
           onDone={() => {
-            setDeleting(undefined);
-            setSelection("");
+            setAction(undefined);
+            selection.clear();
             setPage(1);
             refresh();
             onChange();

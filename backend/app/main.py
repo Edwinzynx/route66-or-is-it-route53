@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from . import auth, zones, records
+from . import auth, zones, records, transfers, bulk_records
 from .db import connection, initialize
 
 
@@ -16,6 +16,8 @@ app = FastAPI(title="Route 53 Clone API", version="1.0.0", lifespan=lifespan)
 app.include_router(auth.router, prefix="/api")
 app.include_router(zones.router, prefix="/api")
 app.include_router(records.router, prefix="/api")
+app.include_router(transfers.router, prefix="/api")
+app.include_router(bulk_records.router, prefix="/api")
 
 
 @app.get("/api/health", tags=["System"])
